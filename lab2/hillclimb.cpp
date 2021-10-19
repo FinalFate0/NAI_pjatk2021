@@ -19,11 +19,12 @@ std::ostream& operator<<(std::ostream& o, vector<double> v)
     return o;
 }
 
-vector<double> hillclimb(function<double(vector<double>)> f, function<bool(vector<double>)> f_domain, vector<double> p0, int iterations)
+vector<double> hillclimb(function<double(vector<double>)> f, function<bool(vector<double>)> f_domain, vector<double> p0, vector<double> next_p, int iterations)
 {
     auto p = p0;
     std::uniform_int_distribution<> distrib(0, p.size() - 1);
-    std::uniform_real_distribution<> distrib_r(-0.1, 0.1);
+    //std::uniform_real_distribution<> distrib_r(-0.1, 0.1);
+    std::uniform_real_distribution<> distrib_r(next_p[0], next_p[1]);
 
     if (!f_domain(p)) throw std::invalid_argument("The p0 point must be in domain");
     for (int i = 0; i < iterations; i++) {
@@ -80,7 +81,9 @@ int main(int argc, char** argv) {
         404.0
     };
 
-    auto result = hillclimb(eggholder, eggholder_domain, eggholder_p0, 10000);
+    vector<double> next_p_dist = {-0.1, 0.1};
+
+    auto result = hillclimb(eggholder, eggholder_domain, eggholder_p0, next_p_dist, 10000);
     std::cout << result << " -> " << eggholder(result) << std::endl;
 
     return 0;
