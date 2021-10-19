@@ -30,7 +30,11 @@ vector<double> hillclimb(function<double(vector<double>)> f, function<bool(vecto
     for (int i = 0; i < iterations; i++) {
         auto p2 = p;
 
-        p[distrib(gen)] += distrib_r(gen);
+        do {
+            p = p2;
+            p[distrib(gen)] += distrib_r(gen);
+        }
+        while(!f_domain(p));
         double y2 = f(p2);
         if (y2 < f(p)) {
             p = p2;
@@ -44,7 +48,7 @@ int main(int argc, char** argv) {
 
     auto rastrigin = [](vector<double> v){
         double x = v.at(0);
-        double n = 2;
+        double n = 2.0;
         double a = 10.0;
         double result = 0.0;
         for(int i = 1;i<n;i++) {
@@ -55,15 +59,15 @@ int main(int argc, char** argv) {
 
     auto eggholder = [](vector<double> v){
         double x = v.at(0), y = v.at(1);
-        return -(y+47)*sin(sqrt(abs((x/2)+(y+47))))-x*sin(sqrt(abs(x-(y+47))));
+        return -(y+47.0)*sin(sqrt(std::abs((x/2.0)+(y+47.0))))-x*sin(sqrt(std::abs(x-(y+47.0))));
     };
 
     auto rastrigin_domain = [](vector<double> v) {
-        return (abs(v[0]) <= 5.12);
+        return (std::abs(v[0]) <= 5.12);
     };
 
     auto eggholder_domain = [](vector<double> v) {
-        return (abs(v[0]) <= 512) && (abs(v[1]) <= 512);
+        return (std::abs(v[0]) <= 512.0) && (std::abs(v[1]) <= 512.0);
     };
 
     std::uniform_real_distribution<> rastrigin_dist(-5.12, 5.12);
@@ -81,7 +85,7 @@ int main(int argc, char** argv) {
         404.0
     };
 
-    vector<double> next_p_dist = {-0.1, 0.1};
+    vector<double> next_p_dist = {-0.01, 0.01};
 
     auto result = hillclimb(eggholder, eggholder_domain, eggholder_p0, next_p_dist, 10000);
     std::cout << result << " -> " << eggholder(result) << std::endl;
