@@ -8,8 +8,8 @@
 using std::vector;
 using std::function;
 
-std::random_device rd;  //Will be used to obtain a seed for the random number engine
-std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+std::random_device rd;
+std::mt19937 gen(rd());
 
 std::ostream& operator<<(std::ostream& o, vector<double> v)
 {
@@ -23,7 +23,6 @@ vector<double> hillclimb(function<double(vector<double>)> f, function<bool(vecto
 {
     auto p = p0;
     std::uniform_int_distribution<> distrib(0, p.size() - 1);
-    //std::uniform_real_distribution<> distrib_r(-0.1, 0.1);
     std::uniform_real_distribution<> distrib_r(next_p[0], next_p[1]);
 
     if (!f_domain(p)) throw std::invalid_argument("The p0 point must be in domain");
@@ -35,6 +34,7 @@ vector<double> hillclimb(function<double(vector<double>)> f, function<bool(vecto
             p[distrib(gen)] += distrib_r(gen);
         }
         while(!f_domain(p));
+        //std::cout << p << std::endl;
         double y2 = f(p2);
         if (y2 < f(p)) {
             p = p2;
@@ -43,7 +43,7 @@ vector<double> hillclimb(function<double(vector<double>)> f, function<bool(vecto
     return p;
 }
 
-int main(int argc, char** argv) {
+int main() {
 
 
     auto rastrigin = [](vector<double> v){
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
         double n = 2.0;
         double a = 10.0;
         double result = 0.0;
-        for(int i = 1;i<n;i++) {
+        for(int i = 1;i<=n;i++) {
             result += pow(x, 2.0) - 10.0*cos(2.0*M_PI*x);
         }
         return a*n+result;
@@ -74,21 +74,40 @@ int main(int argc, char** argv) {
     std::uniform_real_distribution<> eggholder_dist(-512, 512);
 
     vector<double> rastrigin_p0 = {
-        //rastrigin_dist(gen),
-        0.0
+        rastrigin_dist(gen)
     };
 
     vector<double> eggholder_p0 = {
-        //eggholder_dist(gen),
-        //eggholder_dist(gen)
-        511.0,
-        404.0
+        eggholder_dist(gen),
+        eggholder_dist(gen)
     };
 
     vector<double> next_p_dist = {-0.01, 0.01};
 
-    auto result = hillclimb(eggholder, eggholder_domain, eggholder_p0, next_p_dist, 10000);
-    std::cout << result << " -> " << eggholder(result) << std::endl;
+    int input = 0;
+    std::cout << "Choose function to optimize:" << std::endl
+            << "    [1] Rastrigin function" << std::endl
+            << "    [2] Eggholder function  ";
+    if(!(std::cin >> input) || input < 1 || input > 2) throw std::logic_error("Invalid input");
 
+    int iterations = 0;
+    std::cout << "Input number of iterations: ";
+    if(!(std::cin >> iterations) || iterations <= 0) throw std::logic_error("Invalid input");
+
+    switch(input) {
+        case 1: {
+            auto result = hillclimb(rastrigin, rastrigin_domain, rastrigin_p0, next_p_dist, iterations);
+            std::cout << result << " -> " << rastrigin(result) << std::endl;
+            break;
+        }
+
+        case 2: {
+            auto result = hillclimb(eggholder, eggholder_domain, eggholder_p0, next_p_dist, iterations);
+            std::cout << result << " -> " << eggholder(result) << std::endl;
+            break;
+        }
+        default:
+            return -1;
+    }
     return 0;
 }
