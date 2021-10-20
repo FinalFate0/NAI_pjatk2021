@@ -47,11 +47,10 @@ int main() {
 
 
     auto rastrigin = [](vector<double> v){
-        double x = v.at(0);
-        double n = 2.0;
+        auto n = (double)v.size();
         double a = 10.0;
         double result = 0.0;
-        for(int i = 1;i<=n;i++) {
+        for(auto &x : v) {
             result += pow(x, 2.0) - 10.0*cos(2.0*M_PI*x);
         }
         return a*n+result;
@@ -63,7 +62,7 @@ int main() {
     };
 
     auto rastrigin_domain = [](vector<double> v) {
-        return (std::abs(v[0]) <= 5.12);
+        return (std::abs(v[0]) <= 5.12) && (std::abs(v[1]) <= 5.12);
     };
 
     auto eggholder_domain = [](vector<double> v) {
@@ -74,6 +73,7 @@ int main() {
     std::uniform_real_distribution<> eggholder_dist(-512, 512);
 
     vector<double> rastrigin_p0 = {
+        rastrigin_dist(gen),
         rastrigin_dist(gen)
     };
 
