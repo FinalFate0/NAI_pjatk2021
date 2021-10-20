@@ -21,26 +21,26 @@ std::ostream& operator<<(std::ostream& o, vector<double> v)
 
 vector<double> hillclimb(function<double(vector<double>)> f, function<bool(vector<double>)> f_domain, vector<double> p0, vector<double> next_p, int iterations)
 {
-    auto p = p0;
-    std::uniform_int_distribution<> distrib(0, p.size() - 1);
+    auto p_current = p0;
+    std::uniform_int_distribution<> distrib(0, p_current.size() - 1);
     std::uniform_real_distribution<> distrib_r(next_p[0], next_p[1]);
 
-    if (!f_domain(p)) throw std::invalid_argument("The p0 point must be in domain");
+    if (!f_domain(p_current)) throw std::invalid_argument("The p0 point must be in domain");
     for (int i = 0; i < iterations; i++) {
-        auto p2 = p;
+        vector<double> p_new;
 
         do {
-            p = p2;
-            p[distrib(gen)] += distrib_r(gen);
+            p_new = p_current;
+            p_new[distrib(gen)] += distrib_r(gen);
         }
-        while(!f_domain(p));
+        while(!f_domain(p_new));
         //std::cout << p << std::endl;
-        double y2 = f(p2);
-        if (y2 < f(p)) {
-            p = p2;
+        double y2 = f(p_new);
+        if (y2 < f(p_current)) {
+            p_current = p_new;
         }
     }
-    return p;
+    return p_current;
 }
 
 int main() {
