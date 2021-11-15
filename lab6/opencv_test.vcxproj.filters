@@ -15,8 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="window.cpp">
+    <ClCompile Include="capturetest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="nature.mp4">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

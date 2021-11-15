@@ -3,8 +3,8 @@
 #include <iostream>
 int main( int argc, char** argv ) {
     bool capturing = true;
-    // Question for you
-    // cv::VideoCapture cap( "szukaj_zielonego.webm" );
+
+     cv::VideoCapture cap( "nature.mp4" );
     // cv::VideoCapture cap(0);
     if ( !cap.isOpened() ) {
         std::cerr << "error opening frames source" << std::endl;
@@ -15,13 +15,13 @@ int main( int argc, char** argv ) {
     do {
         cv::Mat frame;
         if ( cap.read( frame ) ) {
-            cv::imshow( "Not-yet smart windown", frame );
+            cv::Mat flipped;
+            cv::flip(frame, flipped, 1);
+            cv::imshow( "Not-yet smart windown", flipped);
         } else {
-            // stream finished
             capturing = false;
         }
-        //czekaj na klawisz, sprawdz czy to jest 'esc'
-        if( (cv::waitKey( 1000.0/60.0 )&0x0ff) == 27 ) capturing = false;
+        if( ((cv::waitKey( 1000.0/60.0 )&0x0ff) == 27) || ((cv::waitKey(1000.0 / 60.0) & 0x0ff) == 113)) capturing = false;
     } while( capturing );
     return 0;
 }
