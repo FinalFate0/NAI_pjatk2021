@@ -106,11 +106,11 @@ int main(int argc, char** argv) {
 			break;
 		}
 		else if (key_pressed == 120) {
-			Mat select;
-			inrange.copyTo(select);
-			imshow("zdjecie", select);
-			Rect roi_rect = selectROI("zdjecie", select);
-			Mat roi = Mat(select, roi_rect);
+			//Mat select;
+			//inrange.copyTo(select);
+			//imshow("zdjecie", select);
+			Rect roi_rect = selectROI("obraz", inrange);
+			Mat roi = Mat(inrange, roi_rect);
 			imwrite("output.jpg", roi);
 		}
 	}
